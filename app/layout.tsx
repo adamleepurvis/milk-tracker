@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className="flex h-full min-h-screen flex-col antialiased"
         style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}
       >
-        <SerwistProvider swUrl="/sw.js">
+        <SerwistProvider swUrl="/sw.js" disable={process.env.NODE_ENV === "development"}>
           <HouseholdGate>
             <main className="mx-auto flex w-full max-w-md flex-1 flex-col">{children}</main>
           </HouseholdGate>
