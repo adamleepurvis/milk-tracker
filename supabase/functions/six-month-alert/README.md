@@ -39,9 +39,9 @@ described at the top of `supabase/migrations/0001_init.sql`.
 
 ## 4. Schedule it (daily cron)
 
-Run this once in the Supabase SQL editor, filling in your project ref and the
-`service_role` key (Project Settings -> API). This uses `pg_cron` + `pg_net` to call the
-deployed function once a day:
+Run this once in the Supabase SQL editor (fill in your project ref if different from
+`dpiegpaaleikmczaodxe`). This uses `pg_cron` + `pg_net` to call the deployed function
+once a day:
 
 ```sql
 create extension if not exists pg_cron;
@@ -52,15 +52,18 @@ select cron.schedule(
   '0 14 * * *', -- 14:00 UTC; adjust to a reasonable local morning time
   $$
   select net.http_post(
-    url := 'https://<your-project-ref>.supabase.co/functions/v1/six-month-alert',
-    headers := jsonb_build_object(
-      'Authorization', 'Bearer <your-service-role-key>',
-      'Content-Type', 'application/json'
-    )
+    url := 'https://dpiegpaaleikmczaodxe.supabase.co/functions/v1/six-month-alert',
+    headers := jsonb_build_object('Content-Type', 'application/json')
   );
   $$
 );
 ```
+
+No `Authorization` header is needed here since the function is deployed with
+`--no-verify-jwt`. If you'd rather require one anyway (defense in depth, since the
+function's URL could be guessed), add `'Authorization', 'Bearer <service_role key>'` to
+the `headers` object above — but then the function would need to actually check for it,
+which the current `index.ts` doesn't do.
 
 Alternatively, use the Supabase dashboard's **Edge Functions -> Cron** UI, which wraps
 the same `pg_cron`/`pg_net` setup without hand-writing SQL.
