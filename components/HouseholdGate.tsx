@@ -4,7 +4,7 @@ import { useState } from "react";
 import { setCreatedBy, setUnlocked, useStoredCreatedBy, useUnlocked } from "@/lib/identity";
 import { IdentityProviderValue } from "@/lib/identity-context";
 
-const NAME_OPTIONS = ["Dad", "Mom"];
+const NAME_OPTIONS = ["Baba", "Mama"];
 const PASSCODE = process.env.NEXT_PUBLIC_HOUSEHOLD_PASSCODE ?? "";
 
 export default function HouseholdGate({ children }: { children: React.ReactNode }) {
