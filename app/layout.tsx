@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { SerwistProvider } from "@serwist/next/react";
-import BottomNav from "@/components/BottomNav";
+import HouseholdGate from "@/components/HouseholdGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Milk Tracker",
-  description: "Log pumping sessions and track freezer/fridge milk inventory, fully offline.",
+  description: "Shared log of breast milk pumping sessions and freezer inventory for two devices.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -40,10 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}
       >
         <SerwistProvider swUrl="/sw.js">
-          <main className="mx-auto flex w-full max-w-md flex-1 flex-col">{children}</main>
-          <div className="mx-auto w-full max-w-md">
-            <BottomNav />
-          </div>
+          <HouseholdGate>
+            <main className="mx-auto flex w-full max-w-md flex-1 flex-col">{children}</main>
+          </HouseholdGate>
         </SerwistProvider>
       </body>
     </html>

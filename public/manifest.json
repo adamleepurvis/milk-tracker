@@ -1,7 +1,7 @@
 {
   "name": "Milk Tracker",
   "short_name": "Milk Tracker",
-  "description": "Log breast milk pumping sessions and track freezer/fridge inventory — fully offline.",
+  "description": "Shared log of breast milk pumping sessions and freezer inventory, synced across two devices.",
   "start_url": "/",
   "id": "/",
   "scope": "/",

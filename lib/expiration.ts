@@ -1,44 +1,23 @@
-import type { Destination, FreezerType } from "./types";
+import { addMonths, daysBetween } from "./date";
 
 export type FreshnessStatus = "green" | "yellow" | "red";
 
-export interface StorageLimits {
-  /** Days at which milk is still comfortably within guidance. */
-  goodDays: number;
-  /** Outer day limit ("use by") guidance still calls acceptable. */
-  maxDays: number;
-  label: string;
-}
+const YELLOW_AT_MONTHS = 5;
+const RED_AT_MONTHS = 6;
+/** How far ahead of the 6-month mark the push notification fires. */
+export const PUSH_WINDOW_DAYS = 14;
 
-export function getStorageLimits(
-  destination: Destination,
-  freezerType: FreezerType
-): StorageLimits | null {
-  if (destination === "fridge") {
-    return { goodDays: 3, maxDays: 4, label: "Fridge: best within 4 days" };
-  }
-  if (destination === "freezer") {
-    if (freezerType === "deep") {
-      return { goodDays: 300, maxDays: 365, label: "Deep freezer: good up to 12 months" };
-    }
-    return { goodDays: 183, maxDays: 365, label: "Freezer: best 6 months, ok up to 12 months" };
-  }
-  return null; // "fresh" entries aren't stored, so no expiration applies
-}
-
-export function ageInDays(dateStr: string, from: Date = new Date()): number {
-  const start = new Date(`${dateStr}T00:00:00`);
-  const diffMs = from.setHours(0, 0, 0, 0) - start.getTime();
-  return Math.max(0, Math.round(diffMs / (1000 * 60 * 60 * 24)));
-}
-
-export function getFreshnessStatus(
-  ageDays: number,
-  limits: StorageLimits
-): FreshnessStatus {
-  if (ageDays >= limits.maxDays) return "red";
-  if (ageDays >= limits.goodDays) return "yellow";
+export function getFreshnessStatus(datePumped: string, today: Date = new Date()): FreshnessStatus {
+  const sixMonthMark = addMonths(datePumped, RED_AT_MONTHS);
+  const fiveMonthMark = addMonths(datePumped, YELLOW_AT_MONTHS);
+  if (today >= sixMonthMark) return "red";
+  if (today >= fiveMonthMark) return "yellow";
   return "green";
+}
+
+export function daysUntilSixMonths(datePumped: string, today: Date = new Date()): number {
+  const sixMonthMark = addMonths(datePumped, RED_AT_MONTHS);
+  return daysBetween(today, sixMonthMark);
 }
 
 export const FRESHNESS_COLORS: Record<FreshnessStatus, { bg: string; text: string; dot: string }> = {
