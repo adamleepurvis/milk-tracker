@@ -6,10 +6,10 @@ import { formatDateShort } from "@/lib/date";
 
 export default function EntryRow({
   entry,
-  onMarkUsed,
+  onToggleStatus,
 }: {
   entry: MilkEntry;
-  onMarkUsed: (id: string) => void;
+  onToggleStatus: (entry: MilkEntry) => void;
 }) {
   const isStored = entry.status === "stored";
   const status = isStored ? getFreshnessStatus(entry.date_pumped) : null;
@@ -19,8 +19,7 @@ export default function EntryRow({
     <li>
       <button
         type="button"
-        onClick={() => isStored && onMarkUsed(entry.id)}
-        disabled={!isStored}
+        onClick={() => onToggleStatus(entry)}
         className="flex w-full items-center justify-between gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-left"
       >
         <div className="min-w-0">
@@ -42,11 +41,9 @@ export default function EntryRow({
             )}
           </div>
         </div>
-        {isStored && (
-          <span className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted">
-            Tap to use
-          </span>
-        )}
+        <span className="shrink-0 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground-muted">
+          {isStored ? "Tap to use" : "Tap to restore"}
+        </span>
       </button>
     </li>
   );

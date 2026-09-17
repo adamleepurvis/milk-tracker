@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useEntries } from "@/lib/useEntries";
 import { getFreshnessStatus } from "@/lib/expiration";
 import { supabase } from "@/lib/supabase";
+import type { MilkEntry } from "@/lib/types";
 import EntryRow from "@/components/EntryRow";
 import InstallBanner from "@/components/InstallBanner";
 
@@ -21,8 +22,15 @@ export default function LogPage() {
     [stored]
   );
 
-  async function markUsed(id: string) {
-    await supabase.from("milk_entries").update({ status: "used", used_at: new Date().toISOString() }).eq("id", id);
+  async function toggleStatus(entry: MilkEntry) {
+    if (entry.status === "stored") {
+      await supabase
+        .from("milk_entries")
+        .update({ status: "used", used_at: new Date().toISOString() })
+        .eq("id", entry.id);
+    } else {
+      await supabase.from("milk_entries").update({ status: "stored", used_at: null }).eq("id", entry.id);
+    }
   }
 
   return (
@@ -64,7 +72,7 @@ export default function LogPage() {
         ) : (
           <ul className="flex flex-col gap-2">
             {entries.map((entry) => (
-              <EntryRow key={entry.id} entry={entry} onMarkUsed={markUsed} />
+              <EntryRow key={entry.id} entry={entry} onToggleStatus={toggleStatus} />
             ))}
           </ul>
         )}
